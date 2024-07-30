@@ -1,0 +1,12 @@
+o do <toolchains>
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <version>17</version>
+            <vendor>oracle</vendor>
+        </provides>
+        <configuration>
+            <jdkHome>/path/to/jdk</jdkHome>
+        </configuration>
+    </toolchain>
+</toolchains>

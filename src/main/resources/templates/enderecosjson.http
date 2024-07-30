@@ -1,0 +1,32 @@
+### Variables
+
+### Buscar todos
+GET http://localhost:8080/enderecos
+
+### Buscar o Endereco por ID
+GET http://localhost:8080/enderecos/1
+
+### Buscar o Endereco por CEP
+GET http://localhost:8080/enderecos/cep/01000-000
+
+### Inserir o Endereço 1
+POST http://localhost:8080/enderecos
+content-type: application/json
+
+{
+    "rua": "Rua Prof Benedito Medezzene",
+    "numero": "137",
+    "cep": "09845-320",
+    "complemento": "Casa 1"
+}
+
+### Inserir o Endereço 2
+POST http://localhost:8080/enderecos
+content-type: application/json
+
+{
+    "rua": "Rua das Rosas",
+    "numero": "123",
+    "cep": "01000-000",
+    "complemento": "Casa 1"
+}
