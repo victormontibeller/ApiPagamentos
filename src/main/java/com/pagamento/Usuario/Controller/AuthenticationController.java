@@ -3,13 +3,16 @@ package com.pagamento.Usuario.Controller;
 import com.pagamento.Usuario.Payload.AuthenticationRequest;
 import com.pagamento.Usuario.Payload.AuthenticationResponse;
 import com.pagamento.Usuario.Security.JwtUtil;
+import com.pagamento.Usuario.Service.MyUserDetailsService;
 import com.pagamento.Usuario.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthenticationController {
@@ -21,15 +24,15 @@ public class AuthenticationController {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private UsuarioService usuarioService;
+    private MyUserDetailsService usuarioService;
 
-    @PostMapping("/authenticate")
+    @PostMapping("/api/autenticacao")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
+                new UsernamePasswordAuthenticationToken(authenticationRequest.getUsuario(), authenticationRequest.getSenha())
         );
 
-        final UserDetails userDetails = usuarioService.loadUserByUsername(authenticationRequest.getUsername());
+        final UserDetails userDetails = usuarioService.loadUserByUsername(authenticationRequest.getUsuario());
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));

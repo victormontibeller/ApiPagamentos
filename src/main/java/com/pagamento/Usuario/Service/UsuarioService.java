@@ -38,9 +38,5 @@ public class UsuarioService {
         Usuario user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         userRepository.delete(user);
     }
-
-    public UserDetails loadUserByUsername(String username) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'loadUserByUsername'");
-    }
+ 
 }

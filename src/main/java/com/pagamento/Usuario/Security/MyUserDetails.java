@@ -1,9 +1,8 @@
 package com.pagamento.Usuario.Security;
 
+import com.pagamento.Usuario.Model.Usuario;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.pagamento.Usuario.Model.Usuario;
 
 import java.util.Collection;
 
