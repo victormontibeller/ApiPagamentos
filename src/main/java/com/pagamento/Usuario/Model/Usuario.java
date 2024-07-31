@@ -1,5 +1,10 @@
 package com.pagamento.Usuario.Model;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,5 +20,8 @@ public class Usuario {
     private String username;
     private String password;
 
-    // getters and setters
+    public void setPassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(password);
+    }
 }

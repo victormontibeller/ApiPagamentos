@@ -5,8 +5,8 @@ services:
     image: 'postgres:latest'
     environment:
       POSTGRES_DB: pagamento
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
     ports:
       - '5432:5432'
     healthcheck:

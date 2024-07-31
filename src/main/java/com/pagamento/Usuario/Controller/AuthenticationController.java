@@ -3,7 +3,7 @@ package com.pagamento.Usuario.Controller;
 import com.pagamento.Usuario.Payload.AuthenticationRequest;
 import com.pagamento.Usuario.Payload.AuthenticationResponse;
 import com.pagamento.Usuario.Security.JwtUtil;
-import com.pagamento.Usuario.Service.MyUserDetailsService;
+import com.pagamento.Usuario.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +21,7 @@ public class AuthenticationController {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private MyUserDetailsService userDetailsService;
+    private UsuarioService usuarioService;
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
@@ -29,7 +29,7 @@ public class AuthenticationController {
                 new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
         );
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        final UserDetails userDetails = usuarioService.loadUserByUsername(authenticationRequest.getUsername());
         final String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
