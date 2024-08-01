@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.pagamento.Usuario.Excecoes.CustomAuthenticationEntryPoint;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurer {
@@ -25,12 +27,18 @@ public class SecurityConfigurer {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/autenticacao").permitAll()
+                        .requestMatchers("/autenticacao").permitAll()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
