@@ -1,9 +1,12 @@
 package com.pagamento.Cliente.Model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,12 +14,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "endereco")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Endereco {
 
     @Id
-    @Column(unique = true)
+    // @Column(unique = true)
+    // ENTENDO QUE DUAS PESSOAS RESIDENTES NO MESMO ENDEREÇO PODEM TER CADASTROS EM UM MESMO ENDERECO
+    // PORTANTO NÃO CABE UMA CHAVE PRIMARIA PARA TABELA ENDERECO
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
@@ -36,4 +42,7 @@ public class Endereco {
     @Column(nullable = false)
     @NotEmpty(message = "O complemento não pode estar vazio.")
     private String complemento;
+
+    @OneToMany(mappedBy = "endereco")
+    List<Cliente> clientes;
 }

@@ -24,7 +24,7 @@ public class ClienteService {
         this.cpfValidator = cpfValidator;
     }
 
-    public ClienteDTO criarCliente(ClienteDTO clienteDTO) throws ResourceNotFoundException {
+    public ClienteDTO criarCliente(ClienteDTO clienteDTO) throws ResourceNotFoundException {        
         Cliente cliente = toEntity(clienteDTO);
 
         Cliente finalCliente = cliente;
