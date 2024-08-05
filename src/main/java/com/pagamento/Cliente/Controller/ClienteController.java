@@ -39,16 +39,23 @@ public class ClienteController {
 
     @GetMapping("/email/{email}/")
     public ResponseEntity<Cliente> buscarClientePorEmail(@PathVariable String email) throws ResourceNotFoundException {
+        if(email == null) 
+            return ResponseEntity.notFound().build();
+        
         return ResponseEntity.ok().body(clienteService.buscarClientePorEmail(email));
     }
 
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<Cliente> buscarClientePorCpf(@PathVariable String cpf) throws ResourceNotFoundException {
+        if(cpf == null) 
+            return ResponseEntity.notFound().build();
         return ResponseEntity.ok().body(clienteService.buscarClientePorCpf(cpf));
     }    
 
     @GetMapping("/nome/{nome}")
     public ResponseEntity<Cliente> buscarClientePorNome(@PathVariable String nome) throws ResourceNotFoundException {
+        if(nome == null) 
+            return ResponseEntity.notFound().build();
         return ResponseEntity.ok().body(clienteService.buscarClientePorNome(nome));
     }
 
