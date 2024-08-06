@@ -18,7 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
+import com.pagamento.Cliente.Excecoes.ServiceException;
 import com.pagamento.Cliente.Model.Endereco;
 import com.pagamento.Cliente.Service.EnderecoService;
 import com.pagamento.utils.utils;
@@ -73,15 +73,15 @@ public class EnderecoRepositoryTest {
     }
 
     @Test
-    void testBuscarEnderecos_throwsResourceNotFoundException() {
+    void testBuscarEnderecos_throwsServiceException() {
         when(repository.findAll()).thenReturn(Collections.emptyList());
 
-        assertThrows(ResourceNotFoundException.class,
+        assertThrows(ServiceException.class,
                 () -> service.buscarEnderecos());
     }
 
     @Test
-    void testBuscarEnderecos() throws ResourceNotFoundException {
+    void testBuscarEnderecos() throws ServiceException {
         List<Endereco> enderecos = List.of(utils.criarEnderecoTeste(), 
                                            utils.criarEnderecoTeste1());
         when(repository.findAll()).thenReturn(enderecos);
@@ -92,7 +92,7 @@ public class EnderecoRepositoryTest {
     }
 
     @Test
-    void testExcluirEndereco() throws ResourceNotFoundException {
+    void testExcluirEndereco() throws ServiceException {
         Long id = 1L;
 
         when(repository.findById(id)).thenReturn(java.util.Optional.ofNullable(utils.criarEnderecoTeste()));

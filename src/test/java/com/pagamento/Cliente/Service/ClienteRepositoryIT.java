@@ -21,7 +21,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
+import com.pagamento.Cliente.Excecoes.ServiceException;
 import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Repository.ClienteRepository;
 import com.pagamento.utils.utils;
@@ -57,7 +57,7 @@ class ClienteRepositoryIT {
     }
 
     @AfterEach
-    void tearDelete() {
+    void cleanUp() {
         clienteRepository.deleteAll();
     }
 
@@ -81,7 +81,7 @@ class ClienteRepositoryIT {
 	}
 
     @Test
-    void testBuscarClientes() throws ResourceNotFoundException {
+    void testBuscarClientes() throws ServiceException {
         List<Cliente> clienteBuscado = clienteService.buscarClientes();
         
         assertNotNull(clienteBuscado);
@@ -91,15 +91,15 @@ class ClienteRepositoryIT {
     }
 
     @Test
-    void testDeletarClientePorId() throws ResourceNotFoundException {
+    void testDeletarClientePorId() throws ServiceException {
         var cliente = clienteService.buscarClientePorCpf("445.938.640-20");
         clienteService.excluirCliente(cliente.getId());
-        assertThrows(ResourceNotFoundException.class, 
+        assertThrows(ServiceException.class, 
                     () -> clienteService.buscarClientePorCpf("445.938.640-20"));
     }
 
     @Test
-    void testCriarCliente() throws ResourceNotFoundException {
+    void testCriarCliente() throws ServiceException {
         var novoCliente = clienteService.toDTO(new Cliente(5l, 
                                                            "um nome que eu quiser", 
                                                            "emailTeste@teste.com", 
@@ -112,7 +112,7 @@ class ClienteRepositoryIT {
     }
 
     @Test
-    void testClienteFindByEmail() throws ResourceNotFoundException {
+    void testClienteFindByEmail() throws ServiceException {
         var clienteEncontrado = clienteService.buscarClientePorEmail("joao@example.com");
         
         assertNotNull(clienteEncontrado);
@@ -123,7 +123,7 @@ class ClienteRepositoryIT {
     }
 
     @Test
-    void testClienteFindByCpf() throws ResourceNotFoundException {
+    void testClienteFindByCpf() throws ServiceException {
         var clienteEncontrado = clienteService.buscarClientePorCpf("445.938.640-20");
         
         assertNotNull(clienteEncontrado);
@@ -134,7 +134,7 @@ class ClienteRepositoryIT {
     }
 
     @Test
-    void testBuscarClientePorId() throws ResourceNotFoundException {
+    void testBuscarClientePorId() throws ServiceException {
         var clienteEncontrado = clienteService.buscarClientePorCpf("445.938.640-20");
         var ClienteEncontradoPorId = clienteService.buscarCliente(clienteEncontrado.getId());
         
@@ -146,7 +146,7 @@ class ClienteRepositoryIT {
     }
 
     @Test
-    void testBuscarClientePorNome() throws ResourceNotFoundException {
+    void testBuscarClientePorNome() throws ServiceException {
         var clienteEncontrado = clienteService.buscarClientePorNome("Joaquim pasquale pereira");
         
         assertNotNull(clienteEncontrado);
@@ -157,43 +157,43 @@ class ClienteRepositoryIT {
     }
 
     @Test
-    void testBuscarClientePorIdfalha_throwsResourceNotFoundException () {        
-        assertThrows(ResourceNotFoundException.class, () -> clienteService.buscarCliente(100l));
+    void testBuscarClientePorIdfalha_throwsServiceException () {        
+        assertThrows(ServiceException.class, () -> clienteService.buscarCliente(100l));
     }
 
     @Test
-    void testBuscarPorEmailClientefalha_throwsResourceNotFoundException () {        
-        assertThrows(ResourceNotFoundException.class, () -> clienteService.buscarClientePorEmail("antonio@teste.com"));
+    void testBuscarPorEmailClientefalha_throwsServiceException () {        
+        assertThrows(ServiceException.class, () -> clienteService.buscarClientePorEmail("antonio@teste.com"));
     }
 
     @Test
-    void testBuscarPorNomeClientefalha_throwsResourceNotFoundException () {        
-        assertThrows(ResourceNotFoundException.class, () -> clienteService.buscarClientePorNome("açsldk"));
+    void testBuscarPorNomeClientefalha_throwsServiceException () {        
+        assertThrows(ServiceException.class, () -> clienteService.buscarClientePorNome("açsldk"));
     }
 
     @Test
-    void testBuscarPorNomeCpfFalha_throwsResourceNotFoundException () {        
-        assertThrows(ResourceNotFoundException.class, () -> clienteService.buscarClientePorCpf("açsldk"));
+    void testBuscarPorNomeCpfFalha_throwsServiceException () {        
+        assertThrows(ServiceException.class, () -> clienteService.buscarClientePorCpf("açsldk"));
     }
 
     @Test
-    void testExcluirClienteFalha_throwsResourceNotFoundException () {        
-        assertThrows(ResourceNotFoundException.class, () -> clienteService.excluirCliente(100l));
+    void testExcluirClienteFalha_throwsServiceException () {        
+        assertThrows(ServiceException.class, () -> clienteService.excluirCliente(100l));
     }
 
     @Test
-    void testCriarClienteComCpfInvalido_throwsResourceNotFoundException () {
+    void testCriarClienteComCpfInvalido_throwsServiceException () {
         var novoCliente = new Cliente(1L,
                            "João almeida dos Santos",
                            "joao@example.com",
                            "33478007",
                            LocalDate.of(1990,01,01),
                            utils.criarEnderecoTeste());
-        assertThrows(ResourceNotFoundException.class, () -> clienteService.criarCliente(clienteService.toDTO(novoCliente)));   
+        assertThrows(ServiceException.class, () -> clienteService.criarCliente(clienteService.toDTO(novoCliente)));   
     }
 
     @Test
-    void testCriarClienteNull_throwsResourceNotFoundException () {
+    void testCriarClienteNull_throwsServiceException () {
         var novoCliente = new Cliente();
         assertThrows(NullPointerException.class, () -> clienteService.criarCliente(clienteService.toDTO(novoCliente)));
     }

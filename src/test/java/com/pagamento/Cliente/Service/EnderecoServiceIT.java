@@ -19,7 +19,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
+import com.pagamento.Cliente.Excecoes.ServiceException;
 import com.pagamento.Cliente.Model.Endereco;
 import com.pagamento.Cliente.Repository.EnderecoRepository;
 import com.pagamento.utils.utils;
@@ -78,21 +78,21 @@ public class EnderecoServiceIT {
 	}
 
     @Test
-    void testBuscarEndereco() throws ResourceNotFoundException {
+    void testBuscarEndereco() throws ServiceException {
         List<Endereco> enderecos = service.buscarEnderecos();
         assertTrue(!enderecos.isEmpty());
         assertTrue(enderecos.size() == 2);
     }
 
     @Test
-    void testBuscarEnderecoPorId() throws ResourceNotFoundException {
+    void testBuscarEnderecoPorId() throws ServiceException {
         Endereco endereco = service.buscarEnderecoPorCep("12345-000");
         Endereco endFoundById = service.buscarEndereco(endereco.getId());
         assertTrue(endereco.getId() == endFoundById.getId());
     }
 
     @Test
-    void testBuscarEnderecoPorCep() throws ResourceNotFoundException {
+    void testBuscarEnderecoPorCep() throws ServiceException {
         String cep = "12300-222";
         var endereco = service.buscarEnderecoPorCep("12300-222");
 
@@ -102,42 +102,42 @@ public class EnderecoServiceIT {
     }
 
     @Test 
-    void testExcluirEndereco() throws ResourceNotFoundException {
+    void testExcluirEndereco() throws ServiceException {
         var endereco = service.buscarEnderecoPorCep("12300-222");
         service.excluirEndereco(endereco.getId());
-        assertThrows(ResourceNotFoundException.class, () -> service.buscarEnderecoPorCep("12300-222"));
+        assertThrows(ServiceException.class, () -> service.buscarEnderecoPorCep("12300-222"));
         assertTrue(service.buscarEnderecos().size() == 1);
     }
 
     @Test
-    void testExcluirEnderecoFalha_throwsResourceNotFoundException() {
-        assertThrows(ResourceNotFoundException.class, 
+    void testExcluirEnderecoFalha_throwsServiceException() {
+        assertThrows(ServiceException.class, 
                     () -> service.excluirEndereco(100l));
     }
 
     @Test
-    void testCriarEnderecoFalha_throwsResourceNotFoundException() {
+    void testCriarEnderecoFalha_throwsServiceException() {
         var novoEndereco = new Endereco();
-        assertThrows(ResourceNotFoundException.class, 
+        assertThrows(ServiceException.class, 
                     () -> service.criarEndereco(service.toDTO(novoEndereco)));
     }
 
     @Test
-    void buscarEnderecosFalha_throwsResourceNotFoundException() throws ResourceNotFoundException {
+    void buscarEnderecosFalha_throwsServiceException() throws ServiceException {
         repository.deleteAll();
-        assertThrows(ResourceNotFoundException.class, 
+        assertThrows(ServiceException.class, 
                     () -> service.buscarEnderecos());
     }
 
     @Test
-    void testBuscarEnderecoPorIdFalha_throwsResourceNotFoundException() {
-        assertThrows(ResourceNotFoundException.class, 
+    void testBuscarEnderecoPorIdFalha_throwsServiceException() {
+        assertThrows(ServiceException.class, 
                     () -> service.buscarEndereco(100l));
     }
 
     @Test
-    void testBuscarEnderecoPorCepFalha_throwsResourceNotFoundException() {
-        assertThrows(ResourceNotFoundException.class, 
+    void testBuscarEnderecoPorCepFalha_throwsServiceException() {
+        assertThrows(ServiceException.class, 
                     () -> service.buscarEnderecoPorCep("12300-000"));
     }
 

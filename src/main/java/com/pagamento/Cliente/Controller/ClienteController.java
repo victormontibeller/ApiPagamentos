@@ -2,6 +2,7 @@ package com.pagamento.Cliente.Controller;
 
 import com.pagamento.Cliente.DTO.ClienteDTO;
 import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
+import com.pagamento.Cliente.Excecoes.ServiceException;
 import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Service.ClienteService;
 import jakarta.validation.Valid;
@@ -39,28 +40,26 @@ public class ClienteController {
 
     @GetMapping("/email/{email}/")
     public ResponseEntity<Cliente> buscarClientePorEmail(@PathVariable String email) throws ResourceNotFoundException {
-        if(email == null) 
-            return ResponseEntity.notFound().build();
-        
         return ResponseEntity.ok().body(clienteService.buscarClientePorEmail(email));
     }
 
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<Cliente> buscarClientePorCpf(@PathVariable String cpf) throws ResourceNotFoundException {
-        if(cpf == null) 
-            return ResponseEntity.notFound().build();
         return ResponseEntity.ok().body(clienteService.buscarClientePorCpf(cpf));
     }    
 
     @GetMapping("/nome/{nome}")
     public ResponseEntity<Cliente> buscarClientePorNome(@PathVariable String nome) throws ResourceNotFoundException {
-        if(nome == null) 
-            return ResponseEntity.notFound().build();
         return ResponseEntity.ok().body(clienteService.buscarClientePorNome(nome));
     }
 
     @PostMapping
-    public ResponseEntity<ClienteDTO> criarCliente(@Valid @RequestBody ClienteDTO clienteDTO) throws ResourceNotFoundException {
+    public ResponseEntity<ClienteDTO> criarCliente(@Valid @RequestBody 
+                ClienteDTO clienteDTO) throws ResourceNotFoundException {
+        
+        if (clienteDTO.cpf() == null || clienteDTO.email() == null)
+            throw new ServiceException("CPF e email devem ser informados");
+        
         ClienteDTO clienteSalva = clienteService.criarCliente(clienteDTO);
         return new ResponseEntity<>(clienteSalva, HttpStatus.CREATED);
     }

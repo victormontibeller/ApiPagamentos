@@ -1,195 +1,198 @@
 package com.pagamento.Cliente.Controller;
 
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.List;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.pagamento.Cliente.DTO.ClienteDTO;
 import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
+import com.pagamento.Cliente.Excecoes.ServiceException;
 import com.pagamento.Cliente.Model.Cliente;
+import com.pagamento.Cliente.Repository.ClienteRepository;
 import com.pagamento.Cliente.Service.ClienteService;
 import com.pagamento.utils.utils;
 
+@SpringBootTest
+@Testcontainers
 public class ClienteControllerTest {
+    
+    @Autowired
+    private ClienteController controller;
 
-    @Mock
-    private ClienteService clienteService;
+    @Autowired
+    private ClienteService service;
 
-    @InjectMocks
-    private ClienteController clienteController;
+    @Autowired
+    private ClienteRepository repository;
 
-    AutoCloseable autoCloseable;
+    @Container
+    private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:16-alpine")
+															.withDatabaseName("testdb")
+															.withUsername("admin")
+															.withPassword("admin")
+															.withInitScript("test-data.sql");
 
+    @BeforeAll
+    static void beforeAll() {
+        container.start();
+    }    
     @BeforeEach
     void setUp() {
-        autoCloseable = MockitoAnnotations.openMocks(this);
+        var novoCliente1 = service.toDTO(utils.criarClienteTeste());
+        repository.save(service.toEntity(novoCliente1));
+        var novoCliente2 = service.toDTO(utils.criarClienteTeste1());
+        repository.save(service.toEntity(novoCliente2));
+    
     }
 
     @AfterEach
-    void tearDown() throws Exception {
-        autoCloseable.close();
+    void cleanUp() {
+        repository.deleteAll();
+    }
+
+    @AfterAll
+	static void tearDown() {
+		container.close();
+	}
+
+   	@DynamicPropertySource
+	static void setProperties(DynamicPropertyRegistry dynamicPropertyRegistry) {
+		dynamicPropertyRegistry.add("spring.datasource.url", container::getJdbcUrl);
+		dynamicPropertyRegistry.add("spring.datasource.username", container::getUsername);
+		dynamicPropertyRegistry.add("spring.datasource.password", container::getPassword);
+	}
+
+	@Test
+	void testeCriarBancoDeDados(){
+		assertTrue(container.isRunning());
+		assertTrue(container.isCreated());
+	}    
+
+    //TODO: teste metodo buscarClientesControllerComSucesso
+    @Test
+    void testeBuscarClientesControllerComSucesso() throws ResourceNotFoundException{
+        ResponseEntity<List<Cliente>> clientes = controller.buscarClientes();
+        assertEquals(HttpStatus.OK, clientes.getStatusCode());
+        assertEquals(2, clientes.getBody().size());
+    }
+
+    //TODO: teste metodo buscarClientesControllerComErro
+    @Test
+    void testeBuscarClientesControllerComErro() throws ResourceNotFoundException{
+        Cliente novoCliente = service.buscarClientePorCpf("44593864020");
+        Cliente novoCliente1 = service.buscarClientePorCpf("33475078007");
+        
+        service.excluirCliente(novoCliente.getId());
+        service.excluirCliente(novoCliente1.getId());
+        
+        assertThrows(ServiceException.class, () -> controller.buscarClientes());
     }
     
+    //TODO: teste metodo buscarClientePorIdControllerComSucesso
     @Test
-    void testBuscarClientes_WhenClientesExist_ReturnsOkStatus() throws ResourceNotFoundException {
-        // Arrange
-        List<Cliente> clientes = List.of(utils.criarClienteTeste(), utils.criarClienteTeste1());
-        when(clienteService.buscarClientes()).thenReturn(clientes);
-
-        // Act
-        ResponseEntity<List<Cliente>> response = clienteController.buscarClientes();
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    void testeBuscarClientePorIdControllerComSucesso() throws ResourceNotFoundException{
+        Cliente novoCliente = service.buscarClientePorCpf("44593864020");
+        long id = novoCliente.getId();
+      
+        ResponseEntity<Cliente> cliente = controller.buscarCliente(id);
+        assertEquals(HttpStatus.OK, cliente.getStatusCode());
+        assertEquals("Joaquim pasquale pereira", cliente.getBody().getNome());
     }
 
+    //TODO: teste metodo buscarClientePorIdControllerComErro
     @Test
-    void testBuscarClientes_WhenNoClientesExist_ReturnsOkStatus() throws ResourceNotFoundException {
-        // Arrange
-        when(clienteService.buscarClientes()).thenReturn(List.of());
-
-        // Act
-        ResponseEntity<List<Cliente>> response = clienteController.buscarClientes();
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    void testeBuscarClientePorIdControllerComErro() throws ResourceNotFoundException{
+        assertThrows(ServiceException.class, () -> controller.buscarCliente(0L));
+    }
+    
+    //TODO: teste metodo buscarClientePorEmailControllerComSucesso
+    @Test
+    void testeBuscarClientePorEmailControllerComSucesso() throws ResourceNotFoundException{
+        ResponseEntity<Cliente> cliente = controller.buscarClientePorEmail("123Oliveira@example.com");
+        assertEquals(HttpStatus.OK, cliente.getStatusCode());
+        assertEquals("Joaquim pasquale pereira", cliente.getBody().getNome());
+    }
+    //TODO: teste metodo buscarClientePorEmailControllerComErro
+    @Test
+    void testeBuscarClientePorEmailControllerComErro() throws ResourceNotFoundException{
+        assertThrows(ServiceException.class, () -> controller.buscarClientePorEmail("banana@bancadabanana.com"));
+    }
+    //TODO: teste metodo buscarClientePorCpfControllerComSucesso
+    @Test
+    void testeBuscarClientePorCpfControllerComSucesso() throws ResourceNotFoundException{
+        ResponseEntity<Cliente> cliente = controller.buscarClientePorCpf("44593864020");
+        assertEquals(HttpStatus.OK, cliente.getStatusCode());
+        assertEquals("Joaquim pasquale pereira", cliente.getBody().getNome());
     }
 
+    //TODO: teste metodo buscarClientePorCpfControllerComErro
     @Test
-    public void testBuscarCliente_whenClienteExists_returnsCliente() throws ResourceNotFoundException {
-        // Arrange
-        long id = 1L;
-        Cliente expectedCliente = utils.criarClienteTeste();
-        when(clienteService.buscarCliente(id)).thenReturn(expectedCliente);
-
-        // Act
-        ResponseEntity<Cliente> response = clienteController.buscarCliente(id);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedCliente, response.getBody());
+    void testeBuscarClientePorCpfControllerComErro() throws ResourceNotFoundException{
+        assertThrows(ServiceException.class, () -> controller.buscarClientePorCpf("banana"));
     }
 
+    //TODO: teste metodo buscarClientePorNomeControllerComSucesso
     @Test
-    public void testBuscarCliente_whenClienteDoesNotExist_throwsResourceNotFoundException() throws ResourceNotFoundException {
+    void testeBuscarClientePorNomeControllerComSucesso() throws ResourceNotFoundException{
+        ResponseEntity<Cliente> cliente = controller.buscarClientePorNome("Joaquim");
+        assertEquals(HttpStatus.OK, cliente.getStatusCode());
+        assertEquals("Joaquim pasquale pereira", cliente.getBody().getNome());
+    }
+    
+    //TODO: teste metodo buscarClientePorNomeControllerComErro
+    @Test
+    void testeBuscarClientePorNomeControllerComErro() throws ResourceNotFoundException{
+        assertThrows(ServiceException.class, () -> controller.buscarClientePorNome("banana"));
+    }
+
+    //TODO: teste metodo criarClienteControllerComSucesso
+    @Test
+    void testeCriarClienteControllerComSucesso() throws ResourceNotFoundException{
+        ResponseEntity<Cliente> cliente = controller.buscarClientePorCpf("44593864020");
         
-        long id = 1L;
-        // Arrange
-        when(clienteService.buscarCliente(id)).thenThrow(ResourceNotFoundException.class);
-
-        // Act and Assert
-        assertThrows(ResourceNotFoundException.class, () -> clienteController.buscarCliente(id));
+        assertEquals(HttpStatus.OK, cliente.getStatusCode());
+        assertEquals("Joaquim pasquale pereira", cliente.getBody().getNome());
     }
-
+    
+    //TODO: teste metodo criarClienteControllerComErro
     @Test
-    public void testBuscarClientePorEmail() throws ResourceNotFoundException {
-        Cliente cliente = utils.criarClienteTeste();
-
-        when(clienteService.buscarClientePorEmail(cliente.getEmail())).thenReturn(cliente);
-
-        ResponseEntity<Cliente> response = clienteController.buscarClientePorEmail(cliente.getEmail());
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(cliente, response.getBody());
-    }
-
-    @Test
-    public void testBuscarClientePorEmailNotFound() throws ResourceNotFoundException {
-        ResponseEntity<Cliente> response = clienteController.buscarClientePorEmail(null);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(null, response.getBody());
-    }
-
-    @Test
-    public void testBuscarClientePorCpf_ExistingCpf_ReturnsCliente() throws ResourceNotFoundException {
-        // Arrange
-        Cliente cliente = utils.criarClienteTeste();
-        when(clienteService.buscarClientePorCpf(cliente.getCpf())).thenReturn(cliente);
-
-        // Act
-        ResponseEntity<Cliente> response = clienteController.buscarClientePorCpf(cliente.getCpf());
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(cliente, response.getBody());
-    }
-
-    @Test
-    public void testBuscarClientePorCpf_NonExistingCpf_ReturnsNotFound() throws ResourceNotFoundException {
-        // Arrange
-        String cpf = "12345678901";
+    void testeCriarClienteControllerComErro() throws ResourceNotFoundException{
         
-        when(clienteService.buscarClientePorCpf(cpf)).thenThrow(new ResourceNotFoundException("Cliente not found"));
-
-        // Act & Assert
-        assertThrows(ResourceNotFoundException.class, () -> clienteController.buscarClientePorCpf(cpf));
+        //assertEquals(httpStatus.NO_CONTENT, )
+        assertThrows(ServiceException.class, 
+                    () -> controller.criarCliente(service.toDTO(new Cliente())));
     }
 
+    //TODO: teste metodo deletarClienteControllerComSucesso
     @Test
-    public void testBuscarClientePorCpf_NullCpf_ReturnsBadRequest() throws ResourceNotFoundException {
-        ResponseEntity<Cliente> response = clienteController.buscarClientePorCpf(null);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(null, response.getBody());
+    void testeDeletarClienteControllerComSucesso() throws ResourceNotFoundException{
+        ResponseEntity<Cliente> cliente = controller.buscarClientePorCpf("44593864020");
+        long id = cliente.getBody().getId();
+        
+        controller.excluirCliente(id);
+        
+        assertEquals(HttpStatus.OK, cliente.getStatusCode());
     }
-
+    //TODO: teste metodo deletarClienteControllerComErro
     @Test
-    public void testCriarClienteValid() throws ResourceNotFoundException {
-        // Arrange
-        ClienteDTO clienteDTO = clienteService.toDTO(utils.criarClienteTeste());
-        when(clienteService.criarCliente(clienteDTO)).thenReturn(clienteDTO);
-
-        // Act
-        ResponseEntity<ClienteDTO> response = clienteController.criarCliente(clienteDTO);
-
-        // Assert
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(clienteDTO, response.getBody());
-        verify(clienteService, times(1)).criarCliente(clienteDTO);
+    void testeDeletarClienteControllerComErro() throws ResourceNotFoundException{
+        assertThrows(ServiceException.class, () -> controller.excluirCliente(0L));
     }
-
-    @Test
-    public void testCriarClienteInvalid() throws ResourceNotFoundException {
-        // Arrange
-        ClienteDTO clienteDTO = clienteService.toDTO(new Cliente());
-        when(clienteService.criarCliente(clienteDTO)).thenThrow(new ResourceNotFoundException());
-
-        // Act
-        assertThrows(ResourceNotFoundException.class, () -> clienteController.criarCliente(clienteDTO));
-        verify(clienteService, times(1)).criarCliente(clienteDTO);
-    }
-
-    @Test
-    public void testExcluirCliente_ClientExists_SuccessMessageAndHttpStatus200() throws ResourceNotFoundException {
-        // Arrange
-        long id = 1L;
-        String expectedMessage = "Cliente excluído com sucesso!";
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        // Mock the clienteService to return the expected message
-        Mockito.when(clienteService.excluirCliente(id)).thenReturn(expectedMessage);
-
-        // Act
-        ResponseEntity<String> response = clienteController.excluirCliente(id);
-
-        // Assert
-        assertEquals(expectedMessage, response.getBody());
-        assertEquals(expectedStatusCode, response.getStatusCode());
-    }
-
-
 }
+
