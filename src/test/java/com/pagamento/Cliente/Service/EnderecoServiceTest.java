@@ -26,7 +26,7 @@ import com.pagamento.utils.utils;
 
 @SpringBootTest
 @Testcontainers
-public class EnderecoServiceIT {
+public class EnderecoServiceTest {
 
     @Autowired
     private EnderecoRepository repository;
@@ -86,15 +86,15 @@ public class EnderecoServiceIT {
 
     @Test
     void testBuscarEnderecoPorId() throws ServiceException {
-        Endereco endereco = service.buscarEnderecoPorCep("12345-000");
+        Endereco endereco = service.buscarEnderecoPorCep("12345000");
         Endereco endFoundById = service.buscarEndereco(endereco.getId());
         assertTrue(endereco.getId() == endFoundById.getId());
     }
 
     @Test
     void testBuscarEnderecoPorCep() throws ServiceException {
-        String cep = "12300-222";
-        var endereco = service.buscarEnderecoPorCep("12300-222");
+        String cep = "12300222";
+        var endereco = service.buscarEnderecoPorCep("12300222");
 
         assertTrue(endereco != null);
         assertEquals(endereco.getCep(), cep);
@@ -103,7 +103,7 @@ public class EnderecoServiceIT {
 
     @Test 
     void testExcluirEndereco() throws ServiceException {
-        var endereco = service.buscarEnderecoPorCep("12300-222");
+        var endereco = service.buscarEnderecoPorCep("12300222");
         service.excluirEndereco(endereco.getId());
         assertThrows(ServiceException.class, () -> service.buscarEnderecoPorCep("12300-222"));
         assertTrue(service.buscarEnderecos().size() == 1);
@@ -138,7 +138,7 @@ public class EnderecoServiceIT {
     @Test
     void testBuscarEnderecoPorCepFalha_throwsServiceException() {
         assertThrows(ServiceException.class, 
-                    () -> service.buscarEnderecoPorCep("12300-000"));
+                    () -> service.buscarEnderecoPorCep("12300000"));
     }
 
 

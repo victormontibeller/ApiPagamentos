@@ -28,7 +28,7 @@ import com.pagamento.utils.utils;
 
 @SpringBootTest
 @Testcontainers
-class ClienteRepositoryIT {
+class ClienteRepositoryTest {
     
 	@Autowired
 	private ClienteRepository clienteRepository;
@@ -92,10 +92,10 @@ class ClienteRepositoryIT {
 
     @Test
     void testDeletarClientePorId() throws ServiceException {
-        var cliente = clienteService.buscarClientePorCpf("445.938.640-20");
+        var cliente = clienteService.buscarClientePorCpf("44593864020");
         clienteService.excluirCliente(cliente.getId());
         assertThrows(ServiceException.class, 
-                    () -> clienteService.buscarClientePorCpf("445.938.640-20"));
+                    () -> clienteService.buscarClientePorCpf("44593864020"));
     }
 
     @Test
@@ -105,7 +105,7 @@ class ClienteRepositoryIT {
                                                            "emailTeste@teste.com", 
                                                            "10614072093", 
                                                            LocalDate.now(), 
-                                                           utils.criarEnderecoTeste()));
+                                                           utils.criarEnderecoTeste1()));
         clienteService.criarCliente(novoCliente);
         assertNotNull(clienteService.buscarClientePorCpf(novoCliente.cpf()));
         assertTrue(novoCliente.cpf().equals(clienteService.buscarClientePorCpf(novoCliente.cpf()).getCpf()));
@@ -124,7 +124,7 @@ class ClienteRepositoryIT {
 
     @Test
     void testClienteFindByCpf() throws ServiceException {
-        var clienteEncontrado = clienteService.buscarClientePorCpf("445.938.640-20");
+        var clienteEncontrado = clienteService.buscarClientePorCpf("44593864020");
         
         assertNotNull(clienteEncontrado);
         assertEquals(utils.criarClienteTeste1().getNome(), clienteEncontrado.getNome());
@@ -135,7 +135,7 @@ class ClienteRepositoryIT {
 
     @Test
     void testBuscarClientePorId() throws ServiceException {
-        var clienteEncontrado = clienteService.buscarClientePorCpf("445.938.640-20");
+        var clienteEncontrado = clienteService.buscarClientePorCpf("44593864020");
         var ClienteEncontradoPorId = clienteService.buscarCliente(clienteEncontrado.getId());
         
         assertNotNull(clienteEncontrado);

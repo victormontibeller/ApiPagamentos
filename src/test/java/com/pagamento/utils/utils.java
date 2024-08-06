@@ -21,7 +21,7 @@ public class utils {
         return new Endereco(4l,
                             "Rua Teste jjjjjjj",
                             "123",
-                            "12345-000",
+                            "12345000",
                             "apto 10", null);
     }
 
@@ -39,7 +39,7 @@ public class utils {
         return new Endereco(2l,
                             "Rua Teste kkkkk",
                             "445",
-                            "12300-222",
+                            "12300222",
                             "apto 12", null);
     }
 }
