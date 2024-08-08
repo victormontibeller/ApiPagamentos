@@ -2,6 +2,7 @@ package com.pagamento.Cliente.Controller;
 
 import com.pagamento.Cliente.DTO.ClienteDTO;
 import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
+import com.pagamento.Cliente.Excecoes.ServiceException;
 import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Service.ClienteService;
 import jakarta.validation.Valid;
@@ -53,7 +54,12 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteDTO> criarCliente(@Valid @RequestBody ClienteDTO clienteDTO) throws ResourceNotFoundException {
+    public ResponseEntity<ClienteDTO> criarCliente(@Valid @RequestBody 
+                ClienteDTO clienteDTO) throws ResourceNotFoundException {
+        
+        if (clienteDTO.cpf() == null || clienteDTO.email() == null)
+            throw new ServiceException("CPF e email devem ser informados");
+        
         ClienteDTO clienteSalva = clienteService.criarCliente(clienteDTO);
         return new ResponseEntity<>(clienteSalva, HttpStatus.CREATED);
     }

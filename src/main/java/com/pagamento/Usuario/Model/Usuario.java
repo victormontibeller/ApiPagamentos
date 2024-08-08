@@ -6,19 +6,26 @@ import java.util.Optional;
 import jakarta.persistence.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
 @Entity
 @Table(name = "usuario")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Usuario {
 
     @Id
     @Column(unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    private String username;
+    private Long id;
+    private String username; 
     private String password;
 
     public void setPassword(String password) {

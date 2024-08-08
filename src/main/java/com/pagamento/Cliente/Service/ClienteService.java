@@ -1,7 +1,7 @@
 package com.pagamento.Cliente.Service;
 
 import com.pagamento.Cliente.DTO.ClienteDTO;
-import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
+import com.pagamento.Cliente.Excecoes.ServiceException;
 import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Model.Endereco;
 import com.pagamento.Usuario.Model.Usuario;
@@ -28,75 +28,75 @@ public class ClienteService {
         this.cpfValidator = cpfValidator;
     }
 
-    public ClienteDTO criarCliente(ClienteDTO clienteDTO) throws ResourceNotFoundException {
+    public ClienteDTO criarCliente(ClienteDTO clienteDTO) throws ServiceException {        
         Cliente cliente = toEntity(clienteDTO);
 
         Cliente finalCliente = cliente;
         Endereco endereco = EnderecoRepository.findById(cliente.getEndereco().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado para este id: " + finalCliente.getEndereco().getId()));
+                .orElseThrow(() -> new ServiceException("Endereço não encontrado para este id: " + finalCliente.getEndereco().getId()));
 
         Usuario usuario = UserRepository.findById(cliente.getUsuario().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado para este id: " + finalCliente.getUsuario().getId()));
 
         if (!cpfValidator.validarCPF(cliente.getCpf())) {
-            throw new ResourceNotFoundException("CPF inválido! ");
+            throw new ServiceException("CPF inválido! ");
         }
 
         try {
             cliente = ClienteRepository.save(cliente);
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Erro ao inserir o cliente: " + e.getMessage());
+            throw new ServiceException("Erro ao inserir o cliente: " + e.getMessage());
         } 
 
         return toDTO(cliente);
     }
 
-    public List<Cliente> buscarClientes() throws ResourceNotFoundException {
+    public List<Cliente> buscarClientes() throws ServiceException {
         List<Cliente> cliente = ClienteRepository.findAll();
         if (cliente.isEmpty()) {
-            throw new ResourceNotFoundException("Nenhum cliente encontrado.");
+            throw new ServiceException("Nenhum cliente encontrado.");
         }
         return cliente;
     }
 
-    public Cliente buscarCliente(long id) throws ResourceNotFoundException {
+    public Cliente buscarCliente(long id) throws ServiceException {
         Cliente cliente = ClienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado para este id: " + id));
+                .orElseThrow(() -> new ServiceException("Cliente não encontrado para este id: " + id));
         return cliente;
     }
 
-    public Cliente buscarClientePorEmail(String email) throws ResourceNotFoundException {
+    public Cliente buscarClientePorEmail(String email) throws ServiceException {
         Cliente cliente = ClienteRepository.findByEmail(email);
         if (cliente == null) {
-            throw new ResourceNotFoundException("Cliente com o email: " + email + " não encontrado.");
+            throw new ServiceException("Cliente com o email: " + email + " não encontrado.");
         }
         return cliente;
     }
 
-    public Cliente buscarClientePorCpf(String cpf) throws ResourceNotFoundException {
+    public Cliente buscarClientePorCpf(String cpf) throws ServiceException {
         Cliente cliente = ClienteRepository.findByCpf(cpf);
         if (cliente == null) {
-            throw new ResourceNotFoundException("Cliente com o CPF: " + cpf + " não encontrado.");
+            throw new ServiceException("Cliente com o CPF: " + cpf + " não encontrado.");
         }
         return cliente;
     }    
 
-    public Cliente buscarClientePorNome(String nome) throws ResourceNotFoundException {
+    public Cliente buscarClientePorNome(String nome) throws ServiceException {
         Cliente cliente = ClienteRepository.findByNome(nome);
         if (cliente == null) {
-            throw new ResourceNotFoundException("Cliente com o nome: " + nome + " não encontrado.");
+            throw new ServiceException("Cliente com o nome: " + nome + " não encontrado.");
         }
         return cliente;
     }
 
    // delete
-   public String excluirCliente(long id) throws ResourceNotFoundException {
+   public String excluirCliente(long id) throws ServiceException {
     try {
         Cliente cliente = ClienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado para este id : " + id));
+                .orElseThrow(() -> new ServiceException("Cliente não encontrado para este id : " + id));
         ClienteRepository.deleteById(cliente.getId());
     } catch (Exception e) {
-        throw new ResourceNotFoundException("Cliente não encontrado para este id : " + id);
+        throw new ServiceException("Cliente não encontrado para este id : " + id);
     }
     return "Cliente excluído com sucesso!";
 }    
