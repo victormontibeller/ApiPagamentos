@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Model.Endereco;
+import com.pagamento.Usuario.Model.Usuario;
 
 public class utils {
 
@@ -41,5 +42,17 @@ public class utils {
                             "445",
                             "12300222",
                             "apto 12", null);
+    }
+
+    public static Usuario criarUsuarioTeste() {
+        return new Usuario(1L,
+                           "Pedro Almeida",
+                           "1234567890");
+    }
+
+    public static Usuario criarUsuarioTeste1() {
+        return new Usuario(2L,
+                           "almeida pedro",
+                           "123456789120");
     }
 }

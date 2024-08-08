@@ -3,7 +3,6 @@ package com.pagamento.Usuario.Service;
 import com.pagamento.Usuario.Model.Usuario;
 import com.pagamento.Usuario.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

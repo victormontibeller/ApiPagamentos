@@ -1,8 +1,17 @@
+-- Deleta a tabela usuario se já existir
+DROP TABLE IF EXISTS usuario;
+
 -- Deleta a tabela cliente se já existir
 DROP TABLE IF EXISTS cliente;
 
 -- Cria a tabela endereco se não existir (para referência)
 DROP TABLE IF EXISTS endereco;
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
 
 -- Cria a tabela cliente com as colunas e restrições especificadas
 CREATE TABLE cliente (

@@ -28,7 +28,7 @@ import com.pagamento.utils.utils;
 
 @SpringBootTest
 @Testcontainers
-class ClienteRepositoryTest {
+class ClienteServiceTest {
     
 	@Autowired
 	private ClienteRepository clienteRepository;
