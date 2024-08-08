@@ -27,26 +27,37 @@ class ClienteRepositoryTest {
 
 	AutoCloseable autoCloseable;
 
+	/**
+	 * Initializes the test environment before each test is run.
+	 * Opens the mocks for the test class.
+	 */
 	@BeforeEach
 	void setUp() {
 		autoCloseable = MockitoAnnotations.openMocks(this);
 	}
 
+	/**
+	 * Tears down the test environment by closing the AutoCloseable resource.
+	 *
+	 * @throws Exception if an error occurs during the tear down process
+	 */
 	@AfterEach
 	void tearDown() throws Exception {
 		autoCloseable.close();
 	}
 
+    /**
+     * Test method for creating a new cliente in the repository.
+     *
+     * @return  void
+     */
 	@Test
     public void testCriarCliente() {
-        // Arrange
         Cliente cliente = utils.criarClienteTeste();
         when(clienteRepository.save(cliente)).thenReturn(cliente);
         
-        // Act
         var clienteSalvo = clienteRepository.save(cliente);
         
-        // Assert
         assertNotNull(clienteSalvo);
         assertEquals(cliente.getNome(), clienteSalvo.getNome());
         assertEquals(cliente.getCpf(), clienteSalvo.getCpf());
@@ -57,18 +68,20 @@ class ClienteRepositoryTest {
         verify(clienteRepository, times(1)).save(cliente);
     }
 
-	 //buscar cliente
+	
+	 /**
+	  * Tests the method for finding a cliente by its ID in the repository.
+	  *
+	  * @return  void
+	  */
 	 @Test
 	 public void testClienteFindById() {
-		 // Arrange
 		 Long id = 1L;
 		 Cliente cliente = utils.criarClienteTeste();
 		 when(clienteRepository.findById(id)).thenReturn(java.util.Optional.ofNullable(cliente));
 		 
-		 // Act
 		 var clienteEncontrado = clienteRepository.findById(id);
 		 
-		 // Assert
 		 assertNotNull(clienteEncontrado);
 		 assertEquals(cliente.getNome(), clienteEncontrado.get().getNome());
 		 assertEquals(cliente.getCpf(), clienteEncontrado.get().getCpf());
@@ -79,17 +92,18 @@ class ClienteRepositoryTest {
 		 verify(clienteRepository, times(1)).findById(id);
 	 }  
 	 
-	 //buscar cliente por email
+	 /**
+	  * Test method for finding a cliente by its email in the repository.
+	  *
+	  * @return  void
+	  */
 	 @Test
 	 public void testClienteFindByEmail() {
-		 // Arrange
 		 String email = "joao@example.com";
 		 when(clienteRepository.findByEmail(email)).thenReturn(utils.criarClienteTeste());
 		 
-		 // Act
 		 var clienteEncontrado = clienteRepository.findByEmail(email);
  
-		 // Assert
 		 assertNotNull(clienteEncontrado);
 		 assertEquals(utils.criarClienteTeste().getNome(), clienteEncontrado.getNome());
 		 assertEquals(utils.criarClienteTeste().getCpf(), clienteEncontrado.getCpf());
@@ -100,18 +114,25 @@ class ClienteRepositoryTest {
 		 verify(clienteRepository, times(1)).findByEmail(email);
 	 }
  
-	 //buscar cliente por cpf
- 
+	/**
+	  * Test case for the `findByCpf` method in the `ClienteRepository` class.
+	  *
+	  * This test verifies that the `findByCpf` method returns the correct `Cliente` object
+	  * when given a valid CPF. It mocks the `clienteRepository` object and sets up the
+	  * `findByCpf` method to return a test `Cliente` object. Then, it calls the `findByCpf`
+	  * method with the test CPF and asserts that the returned `Cliente` object is not null and
+	  * has the same values as the test `Cliente` object. Finally, it verifies that the
+	  * `findByCpf` method was called exactly once with the test CPF.
+	  *
+	  * @throws Exception if an error occurs during the test
+	  */
 	 @Test
 	 public void testClienteFindByCpf() {
-		 // Arrange
 		 String cpf = "334.750.780-07";
 		 when(clienteRepository.findByCpf(cpf)).thenReturn(utils.criarClienteTeste());
 		 
-		 // Act  
 		 var clienteEncontrado = clienteRepository.findByCpf(cpf);
 		 
-		 // Assert
 		 assertNotNull(clienteEncontrado);
 		 assertEquals(utils.criarClienteTeste().getNome(), clienteEncontrado.getNome());
 		 assertEquals(utils.criarClienteTeste().getCpf(), clienteEncontrado.getCpf());
@@ -122,18 +143,26 @@ class ClienteRepositoryTest {
 		 verify(clienteRepository, times(1)).findByCpf(cpf);
 	 }
  
-	 //deletar cliente
+	 
+	 /**
+	  * Test case for the deletion of a client.
+	  *
+	  * This test verifies that the `deleteById` method in the `ClienteRepository` class
+	  * correctly deletes a client. It mocks the `clienteRepository` object and sets up
+	  * the `findById` and `save` methods to return a test `Cliente` object. Then, it
+	  * calls the `deleteById` method with the test ID and verifies that the `deleteById`
+	  * method was called exactly once with the test ID.
+	  *
+	  * @throws Exception if an error occurs during the test
+	  */
 	 @Test
 	 public void testDeletarCliente() {
-		 // Arrange
 		 Long id = 1L;
 		 when(clienteRepository.findById(id)).thenReturn(java.util.Optional.ofNullable(utils.criarClienteTeste()));
 		 when(clienteRepository.save(utils.criarClienteTeste())).thenReturn(utils.criarClienteTeste());
 		 
-		 // Act
 		 clienteRepository.deleteById(id);
 		 
-		 // Assert
 		 verify(clienteRepository, times(1)).deleteById(id);
 	 }
 }

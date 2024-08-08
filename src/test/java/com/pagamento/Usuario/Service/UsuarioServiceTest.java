@@ -50,6 +50,11 @@ public class UsuarioServiceTest {
                                                                                         .withPassword("admin")
                                                                                         .withInitScript("test-data.sql");
 
+	/**
+	 * Sets the dynamic properties for the Spring datasource.
+	 *
+	 * @param dynamicPropertyRegistry the registry to add the dynamic properties to
+	 */
     @DynamicPropertySource
 	static void setProperties(DynamicPropertyRegistry dynamicPropertyRegistry) {
 		dynamicPropertyRegistry.add("spring.datasource.url", container::getJdbcUrl);
@@ -57,32 +62,60 @@ public class UsuarioServiceTest {
 		dynamicPropertyRegistry.add("spring.datasource.password", container::getPassword);
 	}
 
+    /**
+     * Initializes the test environment before all tests are run.
+     * Starts the container used for testing.
+     */
     @BeforeAll
     static void beforeAll() {
         container.start();
     }    
 
+    /**
+     * Initializes the test environment before each test is run.
+     * Opens the mocks for the test class.
+     */
     @BeforeEach
     void setUp() {
         autoCloseable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Cleans up the test environment by deleting all entities from the repository.
+     */
     @AfterEach
     void cleanUp() {
         repository.deleteAll();
     }
 
+	/**
+	 * Closes the container after all tests have been executed.
+	 *
+	 */
 	@AfterAll
 	static void tearDown() {
 		container.close();
 	}
 
+	/**
+	 * A test method to check if the database container is running and created.
+	 */
 	@Test
 	void testeCriarBancoDeDados(){
 		assertTrue(container.isRunning());
 		assertTrue(container.isCreated());
 	}
+    
 
+    /**
+     * Test case to verify the functionality of the saveUser method in the UsuarioService class.
+     *
+     * This test creates a new Usuario object with the username "administrador" and password "administrador".
+     * It then mocks the save method of the repository to return the same user object.
+     * The saveUser method is then called with the created user object.
+     * The test asserts that the returned user object is not null and that its username and password match the original user object.
+     *
+     */
     @Test
     void testSaveUser() {
         Usuario user = new Usuario(12l, "administrador","administrador");
@@ -94,6 +127,16 @@ public class UsuarioServiceTest {
         assertEquals(user.getPassword(), savedUser.getPassword());
     }
 
+    /**
+     * Test case to verify the functionality of the getAllUsers method in the UsuarioService class.
+     *
+     * This test creates two Usuario objects with different usernames and passwords.
+     * It then mocks the save method of the repository to return the same user objects.
+     * The getAllUsers method is then called.
+     * The test asserts that the returned result is not null.
+     *
+     * @throws Exception if an error occurs during the test
+     */
     @Test
     void testGetAllUsers() {
         Usuario user1 = new Usuario(122l, "administrador1","administrador1");
@@ -105,6 +148,17 @@ public class UsuarioServiceTest {
         assertNotNull(result);
     }
 
+    
+    /**
+     * Test case to verify the functionality of the getUserById method in the UsuarioService class.
+     *
+     * This test creates a new Usuario object with the id 12, username "administrador", and password "administrador".
+     * It then mocks the findById method of the repository to return an Optional containing the same user object.
+     * The getUserById method is then called with the id of the created user object.
+     * The test asserts that the returned user object is not null and that its username matches the original user object.
+     *
+     * @throws Exception if an error occurs during the test
+     */
     @Test
     void testGetUserById() {
         Usuario user = new Usuario(12l, "administrador","administrador");
@@ -116,6 +170,19 @@ public class UsuarioServiceTest {
         assertEquals(userEncontrado.get().getUsername(), user.getUsername());
     }
 
+    /**
+     * Test case to verify the functionality of the updateUser method in the UsuarioService class.
+     *
+     * This test creates a new Usuario object with the id 1 and sets its username and password to "newUsername" and "newPassword" respectively.
+     * It then creates another Usuario object with the id 1 and sets its username to "oldUsername".
+     * The findById method of the repository is mocked to return an Optional containing the second Usuario object.
+     * The save method of the repository is mocked to return the second Usuario object.
+     * The updateUser method is then called with the id and the first Usuario object.
+     * The test asserts that the returned Usuario object's username is "newUsername".
+     * It also verifies that the save method of the repository was called once with the second Usuario object.
+     *
+     * @throws Exception if an error occurs during the test
+     */
     @Test
     void testUpdateUser() {
         Long id = 1L;
@@ -134,6 +201,16 @@ public class UsuarioServiceTest {
         verify(repository, times(1)).save(user);               
     }
 
+   /**
+    * Test case to verify the functionality of the deleteUser method in the UsuarioService class.
+    *
+    * This test creates a new Usuario object with the username "administrador" and password "administrador".
+    * It then mocks the save method of the repository to return the same user object.
+    * The deleteUser method is then called with the id of the created user object.
+    * The test asserts that the deleteById method of the repository was called once with the id of the created user object.
+    *
+    * @throws Exception if an error occurs during the test
+    */
    @Test
     void testDeleteUser() {
         Usuario user = new Usuario(12l, "administrador","administrador");

@@ -48,11 +48,25 @@ public class EnderecoControllerTest {
 															.withPassword("admin")
 															.withInitScript("test-data.sql");
 
+    /**
+     * Initializes the test environment before all tests are executed.
+     * 
+     */
     @BeforeAll
     static void beforeAll() {
         container.start();
     }
 
+    /**
+     * Sets up the test environment by creating and saving two new address DTOs to the repository.
+     *
+     * This method is called before each test case is executed. It creates two new address DTOs
+     * using the `utils.criarEnderecoTeste()` and `utils.criarEnderecoTeste1()` methods, converts
+     * them to entity objects using the `service.toEntity()` method, and saves them to the repository
+     * using the `repository.save()` method.
+     *
+     * @throws ServiceException if there is an error converting the address DTO to an entity object
+     */
     @BeforeEach
     void setUp() {
         var novoEndereco1 = service.toDTO(utils.criarEnderecoTeste());
@@ -61,16 +75,34 @@ public class EnderecoControllerTest {
         repository.save(service.toEntity(novoEndereco2));
     }
 
+    
+    /**
+     * Cleans up the test environment by deleting all entities from the repository.
+     *
+     * This method is called after each test case is executed. It uses the `repository.deleteAll()` method to remove all entities from the repository. This ensures that the test environment is clean and ready for the next test case.
+     */
+
     @AfterEach
     void cleanUp() {
         repository.deleteAll();
     }
 
+    
+	/**
+	 * Closes the container after all tests have been executed.
+	 *
+	 * This method is called after all tests have been run. It closes the container to release any resources and clean up the test environment.
+	 */
     @AfterAll
 	static void tearDown() {
 		container.close();
 	}
 
+    /**
+     * Sets the dynamic properties for the Spring datasource.
+     *
+     * @param dynamicPropertyRegistry the registry to add the dynamic properties to
+     */
    	@DynamicPropertySource
 	static void setProperties(DynamicPropertyRegistry dynamicPropertyRegistry) {
 		dynamicPropertyRegistry.add("spring.datasource.url", container::getJdbcUrl);
@@ -78,20 +110,41 @@ public class EnderecoControllerTest {
 		dynamicPropertyRegistry.add("spring.datasource.password", container::getPassword);
 	}
 
+    
+    /**
+     * Tests the creation of a database.
+     *
+     * This test method checks if the database container is running and has been created.
+     * It asserts that the `container.isRunning()` method returns `true` and
+     * the `container.isCreated()` method also returns `true`.
+     */
     @Test
     void testeCriarBancoDeDados() {
         assertTrue(container.isRunning());
         assertTrue(container.isCreated());
     }
 
-    //TODO: Falta testar o buscarEnderecos
+    /**
+     * Test case for the method `testBuscarEnderecos` in the `EnderecoController` class.
+     * This test verifies that the method correctly retrieves a list of enderecos.
+     *
+     * @throws ResourceNotFoundException if the retrieval of enderecos fails
+     */
     @Test
     void testBuscarEnderecos() throws ResourceNotFoundException {
         ResponseEntity<List<Endereco>> result = controller.buscarEnderecos();
         assertEquals(2, result.getBody().size());
     }
 
-    //TODO: Falta testar o buscarEnderecosComErro
+    /**
+     * Test case for the method `testBuscarEnderecosComErro` in the `EnderecoController` class.
+     * This test verifies that the method correctly handles errors when retrieving enderecos.
+     *
+     * The test creates two enderecos with invalid CEPs, deletes them, and then attempts to retrieve all enderecos.
+     * It expects a `ServiceException` to be thrown when calling `controller.buscarEnderecos().getBody()`.
+     *
+     * @throws ServiceException if the retrieval of enderecos fails
+     */
     @Test
     void testBuscarEnderecosComErro() {
         Endereco novoEndereco = service.buscarEnderecoPorCep("12345000");
@@ -103,7 +156,12 @@ public class EnderecoControllerTest {
         assertThrows(ServiceException.class, () -> controller.buscarEnderecos().getBody());
     }
 
-    //TODO: Falta testar o buscarEnderecosPorId
+    /**
+     * Test case for the method `testBuscarEnderecosPorId` in the `EnderecoController` class.
+     * This test verifies that the method correctly retrieves an endereco by its ID.
+     *
+     * @throws ResourceNotFoundException if the endereco is not found for the given ID
+     */
     @Test
     void testBuscarEnderecosPorId() throws ResourceNotFoundException {
         Endereco novoEndereco = service.buscarEnderecoPorCep("12345000");
@@ -112,14 +170,24 @@ public class EnderecoControllerTest {
         assertEquals(novoEndereco.getId(), result.getBody().getId());
     }
 
-    //TODO: Falta testar o buscarEnderecosPorIdComErro
+    /**
+     * Test case for the method `buscarEnderecoPorId` in the `EnderecoController` class.
+     * This test verifies that the method throws a `ServiceException` when an invalid ID is provided.
+     *
+     * @throws AssertionError if the expected exception is not thrown
+     */
     @Test
     void testBuscarEnderecosPorIdComErro() {
         assertThrows(ServiceException.class, 
                      () -> controller.buscarEndereco(31L).getBody());
     }
 
-    //TODO: Falta testar o buscarEnderecosPorCep
+    /**
+     * Test case for the method `buscarEnderecoPorCep` in the `EnderecoController` class.
+     * This test verifies that the method returns the correct endereco object for a given cep.
+     *
+     * @throws ResourceNotFoundException if the endereco is not found for the given cep
+     */
     @Test
     void testBuscarEnderecosPorCep() throws ResourceNotFoundException {
         ResponseEntity<Endereco> endereco = controller.buscarEnderecoPorCep("12345000");//controller.buscarEnderecoPorCep("12345000");
@@ -127,14 +195,24 @@ public class EnderecoControllerTest {
         assertEquals("12345000", endereco.getBody().getCep());
     }
 
-    //TODO: Falta testar o buscarEnderecosPorCepComErro
+    /**
+     * Test case for the scenario where the controller is expected to throw a ServiceException
+     * when attempting to search for an endereco by a non-existent cep.
+     *
+     * @throws ServiceException    if the controller fails to throw a ServiceException when
+     *                             searching for an endereco by a non-existent cep
+     */
     @Test
     void testBuscarEnderecosPorCepComErro() {
         assertThrows(ServiceException.class,    
                      () -> controller.buscarEnderecoPorCep("0000000").getBody());
     }
     
-    //TODO: Falta testar o inserirEndereco
+    /**
+     * Test case for the insertion of an endereco.
+     *
+     * @throws ResourceNotFoundException if the endereco is not found
+     */
     @Test
     void testInserirEndereco() throws ResourceNotFoundException {
 
@@ -144,14 +222,23 @@ public class EnderecoControllerTest {
         assertEquals("12345000", novoEndereco.getBody().getCep());
     }
 
-    //TODO: Falta testar o inserirEnderecoComErro
+    /**
+     * Test case for the insertion of an endereco with an error.
+     *
+     * @throws ServiceException if there is an error during the insertion process
+     */
     @Test
     void testInserirEnderecoComErro() {
         assertThrows(ServiceException.class, 
                      () -> controller.inserirEndereco(service.toDTO(new Endereco())));
     }
 
-    //TODO: Falta testar o deletarEnderecos
+
+    /**
+     * Test case for the deletion of enderecos.
+     *
+     * @throws ResourceNotFoundException if the endereco is not found
+     */
     @Test
     void testDeletarEnderecos() throws ResourceNotFoundException {
         ResponseEntity<Endereco> novoEndereco = controller.buscarEnderecoPorCep("12345000");
@@ -163,7 +250,4 @@ public class EnderecoControllerTest {
         assertEquals(HttpStatus.OK, novoEndereco.getStatusCode());
         assertEquals(HttpStatus.OK, novoEndereco1.getStatusCode());
     }
-
-    //TODO: Falta testar o deletarEnderecosComErro
-
 }
