@@ -1,6 +1,7 @@
 package com.pagamento.Cliente.DTO;
 
 import com.pagamento.Cliente.Model.Endereco;
+import com.pagamento.Usuario.Model.Usuario;
 
 import java.time.LocalDate;
 
@@ -10,5 +11,6 @@ public record ClienteDTO(
     String email,
     String cpf,
     LocalDate nascimento,
-    Endereco endereco) {
+    Endereco endereco,
+    Usuario usuario) {
 }
