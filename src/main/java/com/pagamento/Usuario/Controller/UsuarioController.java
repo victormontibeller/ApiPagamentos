@@ -10,17 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/usuario")
 public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
-
-    @PostMapping
-    public ResponseEntity<Usuario> createUser(@RequestBody Usuario user) {
-        Usuario savedUser = usuarioService.saveUser(user);
-        return ResponseEntity.ok(savedUser);
-    }
 
     @GetMapping
     public ResponseEntity<List<Usuario>> getAllUsers() {
@@ -32,12 +26,6 @@ public class UsuarioController {
     public ResponseEntity<Usuario> getUserById(@PathVariable Long id) {
         Optional<Usuario> user = usuarioService.getUserById(id);
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUser(@PathVariable Long id, @RequestBody Usuario userDetails) {
-        Usuario updatedUser = usuarioService.updateUser(id, userDetails);
-        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")

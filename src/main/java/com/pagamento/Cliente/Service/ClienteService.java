@@ -4,9 +4,11 @@ import com.pagamento.Cliente.DTO.ClienteDTO;
 import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
 import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Model.Endereco;
+import com.pagamento.Usuario.Model.Usuario;
 import com.pagamento.Cliente.Repository.ClienteRepository;
 import com.pagamento.Cliente.Repository.EnderecoRepository;
 import com.pagamento.Cliente.Utils.CPFValidator;
+import com.pagamento.Usuario.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +18,13 @@ public class ClienteService {
 
     private final ClienteRepository ClienteRepository;
     private final EnderecoRepository EnderecoRepository;
+    private final UserRepository UserRepository;
     private final CPFValidator cpfValidator;
 
-    public ClienteService(ClienteRepository ClienteRepository, EnderecoRepository EnderecoRepository, CPFValidator cpfValidator) {
+    public ClienteService(ClienteRepository ClienteRepository, EnderecoRepository EnderecoRepository, UserRepository UserRepository, CPFValidator cpfValidator) {
         this.ClienteRepository =ClienteRepository;
         this.EnderecoRepository = EnderecoRepository;
+        this.UserRepository = UserRepository;
         this.cpfValidator = cpfValidator;
     }
 
@@ -30,6 +34,9 @@ public class ClienteService {
         Cliente finalCliente = cliente;
         Endereco endereco = EnderecoRepository.findById(cliente.getEndereco().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado para este id: " + finalCliente.getEndereco().getId()));
+
+        Usuario usuario = UserRepository.findById(cliente.getUsuario().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado para este id: " + finalCliente.getUsuario().getId()));
 
         if (!cpfValidator.validarCPF(cliente.getCpf())) {
             throw new ResourceNotFoundException("CPF inválido! ");
@@ -101,7 +108,8 @@ public class ClienteService {
                 cliente.getEmail(),
                 cliente.getCpf(),
                 cliente.getNascimento(), 
-                cliente.getEndereco());
+                cliente.getEndereco(),
+                cliente.getUsuario());
     }            
 
     public Cliente toEntity(ClienteDTO clienteDTO) {
@@ -113,6 +121,7 @@ public class ClienteService {
         cliente.setCpf(clienteDTO.cpf());
         cliente.setNascimento(clienteDTO.nascimento());
         cliente.setEndereco(clienteDTO.endereco());
+        cliente.setUsuario(clienteDTO.usuario());
 
         return cliente;
     }    
