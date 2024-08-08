@@ -1,7 +1,7 @@
 package com.pagamento.Cliente.Service;
 
 import com.pagamento.Cliente.DTO.EnderecoDTO;
-import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
+import com.pagamento.Cliente.Excecoes.ServiceException;
 import com.pagamento.Cliente.Model.Endereco;
 import com.pagamento.Cliente.Repository.EnderecoRepository;
 import jakarta.validation.Valid;
@@ -18,47 +18,47 @@ public class EnderecoService {
         this.EnderecoRepository = EnderecoRepository;
     }
 
-    public EnderecoDTO criarEndereco(@Valid EnderecoDTO enderecoDTO) throws ResourceNotFoundException {
+    public EnderecoDTO criarEndereco(@Valid EnderecoDTO enderecoDTO) throws ServiceException {
         Endereco endereco = toEntity(enderecoDTO);
 
          try {
             endereco = EnderecoRepository.save(endereco);
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Erro ao inserir o endereco: " + e.getMessage());
+            throw new ServiceException("Erro ao inserir o endereco: " + e.getMessage());
         }
 
         return toDTO(endereco);
     }
 
-    public List<Endereco> buscarEnderecos() throws ResourceNotFoundException {
+    public List<Endereco> buscarEnderecos() throws ServiceException {
         List<Endereco> endereco = EnderecoRepository.findAll();
         if (endereco.isEmpty()) {
-            throw new ResourceNotFoundException("Nenhum endereço encontrado.");
+            throw new ServiceException("Nenhum endereço encontrado.");
         }
         return endereco;         
     }
 
-    public Endereco buscarEndereco(long id) throws ResourceNotFoundException {
+    public Endereco buscarEndereco(long id) throws ServiceException {
         Endereco endereco = EnderecoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado para este id : " + id));
+                .orElseThrow(() -> new ServiceException("Endereço não encontrado para este id : " + id));
         return endereco;
     }
 
-    public Endereco buscarEnderecoPorCep(String cep) throws ResourceNotFoundException {
+    public Endereco buscarEnderecoPorCep(String cep) throws ServiceException {
         Endereco endereco = EnderecoRepository.findByCep(cep);
         if (endereco == null) {
-            throw new ResourceNotFoundException("Endereço com o CEP: " + cep + " não encontrado.");
+            throw new ServiceException("Endereço com o CEP: " + cep + " não encontrado.");
         }
         return endereco;
     }    
 
-    public String excluirEndereco(long id) throws ResourceNotFoundException {
+    public String excluirEndereco(long id) throws ServiceException {
         try {
             Endereco endereco = EnderecoRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado para este id : " + id));
+                    .orElseThrow(() -> new ServiceException("Endereço não encontrado para este id : " + id));
             EnderecoRepository.deleteById(endereco.getId());
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Endereço não encontrado para este id : " + id);
+            throw new ServiceException("Endereço não encontrado para este id : " + id);
         }
         return "Endereço excluído com sucesso!";
     }
