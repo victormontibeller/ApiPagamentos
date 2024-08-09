@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.pagamento.Usuario.Excecoes.CustomAuthenticationEntryPoint;
+import com.pagamento.Usuario.Exception.CustomAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -37,7 +37,9 @@ public class SecurityConfigurer {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/auth/autenticacao").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/registrar").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .anyRequest().permitAll()
+                        //.anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(customAuthenticationEntryPoint)

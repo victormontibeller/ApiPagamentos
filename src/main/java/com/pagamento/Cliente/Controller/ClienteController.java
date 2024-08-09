@@ -1,8 +1,8 @@
 package com.pagamento.Cliente.Controller;
 
 import com.pagamento.Cliente.DTO.ClienteDTO;
-import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
-import com.pagamento.Cliente.Excecoes.ServiceException;
+import com.pagamento.Exception.ResourceNotFoundException;
+import com.pagamento.Exception.ServiceException;
 import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Service.ClienteService;
 import jakarta.validation.Valid;

@@ -1,4 +1,4 @@
-package com.pagamento.Cliente.Excecoes;
+package com.pagamento.Exception;
 
 public class ServiceException extends RuntimeException {
     public ServiceException(String message) {

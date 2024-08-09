@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.pagamento.Exception.ResourceNotFoundException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,7 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.pagamento.Cliente.Excecoes.ServiceException;
+import com.pagamento.Exception.ServiceException;
 import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Repository.ClienteRepository;
 import com.pagamento.utils.utils;
@@ -163,13 +164,14 @@ class ClienteServiceTest {
      * @throws ServiceException if there is an error creating the client
      */
     @Test
-    void testCriarCliente() throws ServiceException {
+    void testCriarCliente() throws ServiceException, ResourceNotFoundException {
         var novoCliente = clienteService.toDTO(new Cliente(5l, 
                                                            "um nome que eu quiser", 
                                                            "emailTeste@teste.com", 
                                                            "10614072093", 
                                                            LocalDate.now(), 
-                                                           utils.criarEnderecoTeste1()));
+                                                           utils.criarEnderecoTeste1(),
+                                                            utils.criarUsuarioTeste1()));
         clienteService.criarCliente(novoCliente);
         assertNotNull(clienteService.buscarClientePorCpf(novoCliente.cpf()));
         assertTrue(novoCliente.cpf().equals(clienteService.buscarClientePorCpf(novoCliente.cpf()).getCpf()));
@@ -357,7 +359,8 @@ class ClienteServiceTest {
                            "joao@example.com",
                            "33478007",
                            LocalDate.of(1990,01,01),
-                           utils.criarEnderecoTeste());
+                           utils.criarEnderecoTeste(),
+                           utils.criarUsuarioTeste());
         assertThrows(ServiceException.class, () -> clienteService.criarCliente(clienteService.toDTO(novoCliente)));   
     }
 

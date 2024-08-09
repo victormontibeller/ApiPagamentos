@@ -21,8 +21,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
-import com.pagamento.Cliente.Excecoes.ServiceException;
+import com.pagamento.Exception.ResourceNotFoundException;
+import com.pagamento.Exception.ServiceException;
 import com.pagamento.Cliente.Model.Endereco;
 import com.pagamento.Cliente.Repository.EnderecoRepository;
 import com.pagamento.Cliente.Service.EnderecoService;

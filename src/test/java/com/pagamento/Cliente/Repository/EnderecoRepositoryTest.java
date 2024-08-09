@@ -17,7 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.pagamento.Cliente.Excecoes.ServiceException;
+import com.pagamento.Exception.ServiceException;
 import com.pagamento.Cliente.Model.Endereco;
 import com.pagamento.Cliente.Service.EnderecoService;
 import com.pagamento.utils.utils;

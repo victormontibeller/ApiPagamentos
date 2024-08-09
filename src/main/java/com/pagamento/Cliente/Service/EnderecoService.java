@@ -1,7 +1,7 @@
 package com.pagamento.Cliente.Service;
 
 import com.pagamento.Cliente.DTO.EnderecoDTO;
-import com.pagamento.Cliente.Excecoes.ServiceException;
+import com.pagamento.Exception.ServiceException;
 import com.pagamento.Cliente.Model.Endereco;
 import com.pagamento.Cliente.Repository.EnderecoRepository;
 import jakarta.validation.Valid;

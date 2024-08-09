@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import com.pagamento.Exception.ResourceNotFoundException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -117,14 +118,14 @@ public class UsuarioServiceTest {
      *
      */
     @Test
-    void testSaveUser() {
+    void testSaveUser() throws ResourceNotFoundException {
         Usuario user = new Usuario(12l, "administrador","administrador");
         when(repository.save(user)).thenReturn(user);
         
         var savedUser = service.saveUser(user);
         assertNotNull(savedUser);
-        assertEquals(user.getUsername(), savedUser.getUsername());
-        assertEquals(user.getPassword(), savedUser.getPassword());
+        assertEquals(user.getUsername(), savedUser.username());
+        assertEquals(user.getPassword(), savedUser.password());
     }
 
     /**

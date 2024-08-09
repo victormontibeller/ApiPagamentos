@@ -1,4 +1,4 @@
-package com.pagamento.Cliente.Excecoes;
+package com.pagamento.Exception;
 
 import lombok.Getter;
 
