@@ -1,0 +1,44 @@
+### Variables
+
+### Buscar todos
+GET http://localhost:8080/clientes
+
+### Buscar o Cliente por ID
+GET http://localhost:8080/clientes/1
+
+### Buscar o Cliente por CPF
+GET http://localhost:8080/clientes/cpf/42361110806
+
+### Buscar o Cliente por Email
+GET http://localhost:8080/clientes/email/victormontibeller@hotmail.com
+
+### Buscar o Cliente por Nome
+GET http://localhost:8080/clientes/nome/José 
+
+### Inserir o Cliente 1
+POST http://localhost:8080/clientes 
+content-type: application/json
+
+{
+    "nome": "Victor Luiz Montibeller",
+    "email": "victormontibeller@hotmail.com",
+    "cpf": "42361110806",
+    "nascimento": "1996-06-19",
+    "endereco": {
+        "id": 1
+    }
+}
+
+### Inserir o Cliente 2
+POST http://localhost:8080/clientes 
+content-type: application/json
+
+{
+    "nome": "José Alencar",
+    "email": "josealencar@hotmail.com",
+    "cpf": "04863696841",
+    "nascimento": "1962-04-02",
+    "endereco": {
+        "id": 2
+    }
+}
