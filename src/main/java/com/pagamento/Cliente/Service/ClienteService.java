@@ -1,7 +1,8 @@
 package com.pagamento.Cliente.Service;
 
 import com.pagamento.Cliente.DTO.ClienteDTO;
-import com.pagamento.Cliente.Excecoes.ServiceException;
+import com.pagamento.Exception.ResourceNotFoundException;
+import com.pagamento.Exception.ServiceException;
 import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Model.Endereco;
 import com.pagamento.Usuario.Model.Usuario;
@@ -28,7 +29,7 @@ public class ClienteService {
         this.cpfValidator = cpfValidator;
     }
 
-    public ClienteDTO criarCliente(ClienteDTO clienteDTO) throws ServiceException {        
+    public ClienteDTO criarCliente(ClienteDTO clienteDTO) throws ServiceException, ResourceNotFoundException {
         Cliente cliente = toEntity(clienteDTO);
 
         Cliente finalCliente = cliente;

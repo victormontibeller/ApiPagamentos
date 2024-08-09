@@ -1,7 +1,7 @@
 package com.pagamento.Cliente.Controller;
 
 import com.pagamento.Cliente.DTO.EnderecoDTO;
-import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
+import com.pagamento.Exception.ResourceNotFoundException;
 import com.pagamento.Cliente.Model.Endereco;
 import com.pagamento.Cliente.Service.EnderecoService;
 import jakarta.validation.Valid;

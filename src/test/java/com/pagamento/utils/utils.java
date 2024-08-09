@@ -18,7 +18,8 @@ public class utils {
                            "joao@example.com",
                            "33475078007",
                            LocalDate.of(1990,01,01),
-                           criarEnderecoTeste());
+                           criarEnderecoTeste(),
+                            criarUsuarioTeste());
 
     }
     
@@ -44,7 +45,8 @@ public class utils {
                            "123Oliveira@example.com",
                            "44593864020",
                            LocalDate.of(1993,6,01),
-                           criarEnderecoTeste1());
+                           criarEnderecoTeste1(),
+                        criarUsuarioTeste1());
 
     }
     
@@ -62,7 +64,6 @@ public class utils {
 
     /**
      * Creates a test Usuario object with id 1, name "Pedro Almeida", and phone number "1234567890".
-     *
      */
     public static Usuario criarUsuarioTeste() {
         return new Usuario(1L,
@@ -72,7 +73,6 @@ public class utils {
 
     /**
      * Creates a test Usuario object with id 2, name "almeida pedro", and phone number "123456789120".
-     *
      */
     public static Usuario criarUsuarioTeste1() {
         return new Usuario(2L,

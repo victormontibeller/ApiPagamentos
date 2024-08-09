@@ -1,4 +1,4 @@
-package com.pagamento.Usuario.Excecoes;
+package com.pagamento.Usuario.Exception;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

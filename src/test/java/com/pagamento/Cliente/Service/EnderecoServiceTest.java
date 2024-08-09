@@ -19,7 +19,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.pagamento.Cliente.Excecoes.ServiceException;
+import com.pagamento.Exception.ServiceException;
 import com.pagamento.Cliente.Model.Endereco;
 import com.pagamento.Cliente.Repository.EnderecoRepository;
 import com.pagamento.utils.utils;

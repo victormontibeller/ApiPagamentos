@@ -49,4 +49,14 @@ public class Cliente {
     @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
+
+    public Cliente (String nome, String email, String cpf, LocalDate nascimento, Endereco endereco, Usuario usuario) {
+        this.nome = nome;
+        this.email = email;
+        this.cpf = cpf;
+        this.nascimento = nascimento;
+        this.endereco = endereco;
+        this.usuario = usuario;
+    }
+
 }

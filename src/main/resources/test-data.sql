@@ -21,6 +21,7 @@ CREATE TABLE cliente (
     cpf VARCHAR(20) NOT NULL, -- Equivalente a @Column(nullable = false)
     nascimento DATE NOT NULL, -- Equivalente a @Column(nullable = false) e @NotNull
     endereco_id INT, -- Referência para a tabela endereco
+    usuario_id INT, -- Referência para a tabela endereco
     CONSTRAINT email_unique UNIQUE (email), -- Garante que o email seja único
     CONSTRAINT cpf_unique UNIQUE (cpf) -- Garante que o cpf seja único
 );
@@ -37,4 +38,10 @@ CREATE TABLE endereco (
 ALTER TABLE cliente 
 ADD CONSTRAINT fk_endereco
 FOREIGN KEY (endereco_id) REFERENCES endereco (id)
+ON DELETE CASCADE;
+
+-- Adiciona a chave estrangeira de endereco_id na tabela cliente
+ALTER TABLE cliente
+ADD CONSTRAINT fk_usuario
+FOREIGN KEY (usuario_id) REFERENCES users (id)
 ON DELETE CASCADE;

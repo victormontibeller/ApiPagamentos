@@ -1,14 +1,12 @@
 package com.pagamento.Usuario.Service;
 
-import com.pagamento.Cliente.DTO.ClienteDTO;
-import com.pagamento.Cliente.Excecoes.ResourceNotFoundException;
-import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Model.Endereco;
+import com.pagamento.Exception.ResourceNotFoundException;
+import com.pagamento.Exception.ServiceException;
 import com.pagamento.Usuario.DTO.RegisterRequest;
 import com.pagamento.Usuario.Model.Usuario;
 import com.pagamento.Usuario.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +22,13 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public RegisterRequest saveUser(RegisterRequest registerRequest) throws ResourceNotFoundException {
+    public RegisterRequest saveUser(Usuario registerRequest) throws ResourceNotFoundException {
+
+        List<Usuario> user = userRepository.findByUsername(registerRequest.getUsername());
+        if (!user.isEmpty())  {
+            throw new ResourceNotFoundException("Usuário já cadastrado: " + registerRequest.getUsername());
+        }
+
         Usuario usuario = toEntity(registerRequest);
         try {
             usuario = userRepository.save(usuario);
@@ -60,13 +64,16 @@ public class UsuarioService {
                 usuario.getPassword());
     }
 
-    public Usuario toEntity(RegisterRequest registerRequest) {
+    public Usuario toEntity(Usuario registerRequest) {
         Usuario usuario = new Usuario();
-        usuario.setUsername(registerRequest.username());
-        usuario.setPassword(passwordEncoder.encode(registerRequest.password()));
+        usuario.setUsername(registerRequest.getUsername());
+        usuario.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
 
         return usuario;
     }
 
+    public Optional<Usuario> findByUsername(String usuario) {
+        return null;
+    }
 }
 
