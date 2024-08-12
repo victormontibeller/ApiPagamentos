@@ -28,6 +28,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.pagamento.Usuario.Model.Usuario;
 import com.pagamento.Usuario.Repository.UserRepository;
+import com.pagamento.utils.utils;
 
 
 @SpringBootTest
@@ -119,10 +120,10 @@ public class UsuarioServiceTest {
      */
     @Test
     void testSaveUser() throws ResourceNotFoundException {
-        Usuario user = new Usuario(12l, "administrador","administrador");
+        Usuario user = new Usuario(12l, "administrador","administrador", utils.criarClienteTeste());
         when(repository.save(user)).thenReturn(user);
         
-        var savedUser = service.saveUser(user);
+        var savedUser = service.saveUser(service.toRegisterRequest(user));
         assertNotNull(savedUser);
         assertEquals(user.getUsername(), savedUser.username());
         assertEquals(user.getPassword(), savedUser.password());
@@ -140,9 +141,9 @@ public class UsuarioServiceTest {
      */
     @Test
     void testGetAllUsers() {
-        Usuario user1 = new Usuario(122l, "administrador1","administrador1");
+        Usuario user1 = new Usuario(122l, "administrador1","administrador1", utils.criarClienteTeste());
         when(repository.save(user1)).thenReturn(user1);
-        Usuario user = new Usuario(12l, "administrador","administrador");
+        Usuario user = new Usuario(12l, "administrador","administrador", utils.criarClienteTeste());
         when(repository.save(user)).thenReturn(user);
         var result = service.getAllUsers();
         
@@ -162,7 +163,7 @@ public class UsuarioServiceTest {
      */
     @Test
     void testGetUserById() {
-        Usuario user = new Usuario(12l, "administrador","administrador");
+        Usuario user = new Usuario(12l, "administrador","administrador", utils.criarClienteTeste());
         when(repository.findById(user.getId())).thenReturn(Optional.of(user));
         
         var userEncontrado = service.getUserById(user.getId());        
@@ -190,6 +191,7 @@ public class UsuarioServiceTest {
         Usuario userDetails = new Usuario();
         userDetails.setUsername("newUsername");
         userDetails.setPassword("newPassword");
+        userDetails.setCliente(utils.criarClienteTeste());
         Usuario user = new Usuario();
         user.setId(id);
         user.setUsername("oldUsername");
@@ -214,7 +216,7 @@ public class UsuarioServiceTest {
     */
    @Test
     void testDeleteUser() {
-        Usuario user = new Usuario(12l, "administrador","administrador");
+        Usuario user = new Usuario(12l, "administrador","administrador", utils.criarClienteTeste());
         when(repository.save(user)).thenReturn(user);
 
         repository.deleteById(user.getId());

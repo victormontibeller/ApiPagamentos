@@ -6,9 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.UUID;
 
-public interface CartaoRepository extends JpaRepository<Cartao, UUID> {
+public interface CartaoRepository extends JpaRepository<Cartao, String> {
     @Query("select count(numero) from Cartao where cpf = ?1")
 
     int countCartaoByCpf(String cpf);

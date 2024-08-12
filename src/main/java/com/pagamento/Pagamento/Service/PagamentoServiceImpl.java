@@ -6,7 +6,7 @@ import com.pagamento.Cliente.Model.Cliente;
 import com.pagamento.Cliente.Repository.ClienteRepository;
 import com.pagamento.Exception.LimiteCartaoException;
 import com.pagamento.Exception.MessageNotFoundException;
-import com.pagamento.Pagamento.CartaoDto;
+import com.pagamento.Pagamento.DTO.CartaoDto;
 import com.pagamento.Pagamento.DTO.PagamentoPorClienteDto;
 import com.pagamento.Pagamento.Model.Pagamento;
 import com.pagamento.Pagamento.Repository.PagamentoRepository;

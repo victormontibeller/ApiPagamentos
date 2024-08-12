@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
@@ -53,7 +51,7 @@ public class AuthenticationController {
 
     @PostMapping("/registrar")
     public ResponseEntity<?> criarUsuario(@RequestBody Usuario registerRequest) throws Exception {
-        RegisterRequest usuarioSalvo = userService.saveUser(registerRequest);
+        RegisterRequest usuarioSalvo = userService.saveUser(userService.toRegisterRequest(registerRequest));
         final String jwt = jwtUtil.generateToken(registerRequest.getUsername());
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }

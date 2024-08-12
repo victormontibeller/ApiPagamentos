@@ -1,7 +1,5 @@
 package com.pagamento.Usuario.Service;
 
-import com.pagamento.Cliente.Model.Endereco;
-import com.pagamento.Exception.ResourceNotFoundException;
 import com.pagamento.Exception.ServiceException;
 import com.pagamento.Usuario.DTO.RegisterRequest;
 import com.pagamento.Usuario.Model.Usuario;
@@ -22,20 +20,22 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public RegisterRequest saveUser(Usuario registerRequest) throws ResourceNotFoundException {
+    public RegisterRequest saveUser(RegisterRequest registerRequest) throws ServiceException {
+        if(registerRequest == null)
+            throw new ServiceException("Requisição vazia");
 
-        List<Usuario> user = userRepository.findByUsername(registerRequest.getUsername());
+        List<Usuario> user = userRepository.findByUsername(registerRequest.username());
         if (!user.isEmpty())  {
-            throw new ResourceNotFoundException("Usuário já cadastrado: " + registerRequest.getUsername());
+            throw new ServiceException("Usuário já cadastrado: " + registerRequest.username());
         }
 
         Usuario usuario = toEntity(registerRequest);
         try {
             usuario = userRepository.save(usuario);
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Erro ao inserir o usuário: " + e.getMessage());
+            throw new ServiceException("Erro ao inserir o usuário: " + e.getMessage());
         }
-        return toDTO(usuario);
+        return toRegisterRequest(usuario);
     }
 
     public List<Usuario> getAllUsers() {
@@ -58,22 +58,20 @@ public class UsuarioService {
         userRepository.delete(user);
     }
 
-    public RegisterRequest toDTO(Usuario usuario) {
+    public RegisterRequest toRegisterRequest(Usuario usuario) {
         return new RegisterRequest(
                 usuario.getUsername(),
-                usuario.getPassword());
+                usuario.getPassword(), 
+                usuario.getCliente());
     }
 
-    public Usuario toEntity(Usuario registerRequest) {
+    public Usuario toEntity(RegisterRequest registerRequest) {
         Usuario usuario = new Usuario();
-        usuario.setUsername(registerRequest.getUsername());
-        usuario.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        usuario.setUsername(registerRequest.username());
+        usuario.setPassword(passwordEncoder.encode(registerRequest.password()));
+        usuario.setCliente(registerRequest.cliente());
 
         return usuario;
-    }
-
-    public Optional<Usuario> findByUsername(String usuario) {
-        return null;
     }
 }
 

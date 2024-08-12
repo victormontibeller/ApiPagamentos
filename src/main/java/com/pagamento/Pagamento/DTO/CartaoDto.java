@@ -1,4 +1,4 @@
-package com.pagamento.Pagamento;
+package com.pagamento.Pagamento.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

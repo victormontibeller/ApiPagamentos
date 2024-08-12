@@ -1,7 +1,6 @@
 package com.pagamento.Usuario.Controller;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -82,7 +81,7 @@ public class UsuarioControllerTest {
     @BeforeEach
     void setUp() throws ResourceNotFoundException {
         var user = utils.criarUsuarioTeste();
-        service.saveUser(user);
+        service.saveUser(service.toRegisterRequest(user));
     }
 
     /**

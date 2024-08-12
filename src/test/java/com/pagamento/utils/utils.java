@@ -68,7 +68,8 @@ public class utils {
     public static Usuario criarUsuarioTeste() {
         return new Usuario(1L,
                            "Pedro Almeida",
-                           "1234567890");
+                           "1234567890", 
+                           new Cliente());
     }
 
     /**
@@ -77,6 +78,7 @@ public class utils {
     public static Usuario criarUsuarioTeste1() {
         return new Usuario(2L,
                            "almeida pedro",
-                           "123456789120");
+                           "123456789120",
+                           new Cliente());
     }
 }

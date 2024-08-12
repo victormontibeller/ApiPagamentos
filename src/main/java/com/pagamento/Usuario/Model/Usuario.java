@@ -1,10 +1,10 @@
 package com.pagamento.Usuario.Model;
 
-import java.util.List;
-import java.util.Optional;
 
 import jakarta.persistence.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import com.pagamento.Cliente.Model.Cliente;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +27,9 @@ public class Usuario {
     private Long id;
     private String username; 
     private String password;
+
+    @OneToOne(mappedBy = "usuario")
+    private Cliente cliente;
 
     public void setPassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

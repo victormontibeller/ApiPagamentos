@@ -1,6 +1,5 @@
 package com.pagamento.Pagamento.DTO;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
